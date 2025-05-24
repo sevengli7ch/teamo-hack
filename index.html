@@ -16,6 +16,11 @@
             margin: 0;
             overflow: hidden; /* Evitar scroll */
             position: relative; /* Para posicionar los elementos de Matrix */
+            cursor: pointer; /* Indica que la pantalla es interactiva */
+            user-select: none; /* Evita selección de texto en móviles */
+            -webkit-user-select: none; /* Para Safari */
+            -moz-user-select: none; /* Para Firefox */
+            -ms-user-select: none; /* Para IE/Edge */
         }
         .container {
             text-align: left;
@@ -60,6 +65,15 @@
             20% { opacity: 0.8; }
             100% { transform: translateY(100vh); opacity: 0; }
         }
+        #tapToContinue {
+            position: absolute;
+            bottom: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 4; /* Para que esté siempre visible */
+        }
     </style>
 </head>
 <body>
@@ -67,51 +81,65 @@
         <pre id="hackerText"></pre><span class="cursor"></span>
         <div id="finalMessage"></div>
     </div>
+    <div id="tapToContinue">Toca la pantalla para continuar...</div>
 
     <script>
         const hackerTextElement = document.getElementById('hackerText');
         const finalMessageElement = document.getElementById('finalMessage');
+        const tapToContinueElement = document.getElementById('tapToContinue');
         const romanticLines = [
             "Conectando con la esencia de mi corazón...",
             "Descifrando las señales del destino...",
+            "Acceso concedido a la verdad más pura...",
+            "Analizando la conexión irrompible...",
             "Extrayendo el sentimiento más profundo...",
-            "Confirmando...",
-            "¡El mensaje de SEVEN ha sido revelado!"
+            "Confirmando una realidad innegable...",
+            "¡El mensaje del universo ha sido revelado!"
         ];
         let lineIndex = 0;
         let charIndex = 0;
         let currentLine = '';
-        let isTyping = true;
-        const finalMessage = "TE AMO NASH"; // Tu mensaje final
+        let isTyping = false; // Ahora solo tipeará cuando se lo indiquemos
+        let isFinalMessageShown = false;
+        const finalMessage = "¡TE AMO, NASH! ❤️"; // Tu mensaje final
         const matrixMessage = "TE AMO, NASH!"; // Mensaje para el efecto Matrix
 
-        function typeWriter() {
-            if (isTyping) {
-                if (lineIndex < romanticLines.length) {
-                    if (charIndex < romanticLines[lineIndex].length) {
-                        currentLine += romanticLines[lineIndex].charAt(charIndex);
-                        hackerTextElement.textContent = currentLine;
-                        charIndex++;
-                        setTimeout(typeWriter, Math.random() * 80 + 30); // Velocidad de tipeo aleatoria
-                    } else {
-                        currentLine += '\n'; // Salto de línea al final de cada línea
-                        lineIndex++;
-                        charIndex = 0;
-                        setTimeout(typeWriter, 800); // Pausa entre líneas
-                    }
-                } else {
-                    isTyping = false;
-                    showFinalMessage();
-                    startMatrixEffect();
+        function typeCurrentLine() {
+            if (charIndex < romanticLines[lineIndex].length) {
+                currentLine += romanticLines[lineIndex].charAt(charIndex);
+                hackerTextElement.textContent = currentLine;
+                charIndex++;
+                setTimeout(typeCurrentLine, Math.random() * 80 + 30); // Velocidad de tipeo aleatoria
+            } else {
+                currentLine += '\n'; // Salto de línea al final de cada línea
+                hackerTextElement.textContent = currentLine; // Asegura que el salto de línea se muestre
+                isTyping = false; // Termina de tipear la línea actual
+                if (lineIndex < romanticLines.length -1) { // Mostrar "Toca para continuar" si no es la última línea romántica
+                    tapToContinueElement.style.opacity = 1;
                 }
             }
         }
 
-        function showFinalMessage() {
-            hackerTextElement.style.display = 'none'; // Oculta el texto de las líneas románticas
-            document.querySelector('.cursor').style.display = 'none'; // Oculta el cursor
-            finalMessageElement.textContent = finalMessage;
-            finalMessageElement.style.opacity = 1; // Hacerlo visible con fade-in
+        function nextStep() {
+            if (isTyping) return; // No hacer nada si ya se está tipeando
+
+            tapToContinueElement.style.opacity = 0; // Oculta el mensaje "Toca para continuar"
+
+            if (lineIndex < romanticLines.length) {
+                // Tipear la siguiente línea romántica
+                isTyping = true;
+                charIndex = 0;
+                typeCurrentLine();
+                lineIndex++;
+            } else if (!isFinalMessageShown) {
+                // Mostrar el mensaje final y empezar el efecto Matrix
+                isFinalMessageShown = true;
+                hackerTextElement.style.display = 'none'; // Oculta el texto de las líneas románticas
+                document.querySelector('.cursor').style.display = 'none'; // Oculta el cursor
+                finalMessageElement.textContent = finalMessage;
+                finalMessageElement.style.opacity = 1; // Hacerlo visible con fade-in
+                startMatrixEffect();
+            }
         }
 
         function startMatrixEffect() {
@@ -135,8 +163,11 @@
             }, 150); // Frecuencia de aparición de los textos Matrix
         }
 
-        // Iniciar el efecto después de un pequeño retraso
-        setTimeout(typeWriter, 1000);
+        // Event listener para cualquier toque/clic en el cuerpo
+        document.body.addEventListener('click', nextStep);
+
+        // Iniciar la primera línea automáticamente
+        nextStep();
     </script>
 </body>
 </html>
