@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensaje Secreto</title>
+    <style>
+        body {
+            background-color: #0d1117; /* Fondo oscuro */
+            color: #00ff00; /* Texto verde hacker */
+            font-family: 'Consolas', 'Monaco', 'Lucida Console', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Evitar scroll */
+        }
+        .container {
+            text-align: left;
+            width: 90%;
+            max-width: 600px;
+            white-space: pre-wrap; /* Para que los saltos de línea y espacios se respeten */
+            word-break: break-all; /* Para que las palabras largas se rompan */
+        }
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1em;
+            background-color: #00ff00;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        #finalMessage {
+            font-size: 2.5em; /* Tamaño más grande para el mensaje final */
+            text-align: center;
+            color: #ff007f; /* Color rosa/magenta para "Te amo" */
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <pre id="hackerText"></pre><span class="cursor"></span>
+        <div id="finalMessage"></div>
+    </div>
+
+    <script>
+        const hackerTextElement = document.getElementById('hackerText');
+        const finalMessageElement = document.getElementById('finalMessage');
+        const hackerLines = [
+            "Iniciando secuencia de intrusión...",
+            "Buscando vulnerabilidades en el sistema...",
+            "Acceso concedido al servidor principal...",
+            "Descifrando paquetes de datos encriptados...",
+            "Extrayendo información crítica...",
+            "Analizando patrones de comportamiento...",
+            "¡Mensaje interceptado y decodificado!"
+        ];
+        let lineIndex = 0;
+        let charIndex = 0;
+        let currentLine = '';
+        let isTyping = true;
+
+        function typeWriter() {
+            if (isTyping) {
+                if (lineIndex < hackerLines.length) {
+                    if (charIndex < hackerLines[lineIndex].length) {
+                        currentLine += hackerLines[lineIndex].charAt(charIndex);
+                        hackerTextElement.textContent = currentLine;
+                        charIndex++;
+                        setTimeout(typeWriter, Math.random() * 80 + 30); // Velocidad de tipeo aleatoria
+                    } else {
+                        currentLine += '\n'; // Salto de línea al final de cada línea
+                        lineIndex++;
+                        charIndex = 0;
+                        setTimeout(typeWriter, 800); // Pausa entre líneas
+                    }
+                } else {
+                    isTyping = false;
+                    showFinalMessage();
+                }
+            }
+        }
+
+        function showFinalMessage() {
+            hackerTextElement.style.display = 'none'; // Oculta el texto hacker
+            document.querySelector('.cursor').style.display = 'none'; // Oculta el cursor
+            finalMessageElement.textContent = "TE AMO NASH ❤️"; // El mensaje final
+            finalMessageElement.style.opacity = 1; // Hacerlo visible con fade-in
+        }
+
+        // Iniciar el efecto después de un pequeño retraso
+        setTimeout(typeWriter, 1000);
+    </script>
+</body>
+</html>
