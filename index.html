@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mensaje Secreto</title>
+    <title>Mensaje Secreto para Nash</title>
     <style>
         body {
             background-color: #0d1117; /* Fondo oscuro */
@@ -15,6 +15,7 @@
             min-height: 100vh;
             margin: 0;
             overflow: hidden; /* Evitar scroll */
+            position: relative; /* Para posicionar los elementos de Matrix */
         }
         .container {
             text-align: left;
@@ -22,6 +23,8 @@
             max-width: 600px;
             white-space: pre-wrap; /* Para que los saltos de línea y espacios se respeten */
             word-break: break-all; /* Para que las palabras largas se rompan */
+            position: relative;
+            z-index: 2; /* Asegurar que el texto principal esté encima de los de Matrix */
         }
         .cursor {
             display: inline-block;
@@ -41,6 +44,21 @@
             color: #ff007f; /* Color rosa/magenta para "Te amo" */
             opacity: 0;
             transition: opacity 2s ease-in-out;
+            position: relative;
+            z-index: 3; /* Para que el mensaje final esté encima de todo */
+        }
+        .matrix-text {
+            position: absolute;
+            color: #00ff00; /* Color verde Matrix */
+            font-size: 1.2em; /* Tamaño del texto Matrix */
+            opacity: 0;
+            animation: fadeOutAndFall 4s forwards; /* Animación de caída y desvanecimiento */
+            z-index: 1; /* Estar detrás del texto principal */
+        }
+        @keyframes fadeOutAndFall {
+            0% { transform: translateY(-50px); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(100vh); opacity: 0; }
         }
     </style>
 </head>
@@ -53,25 +71,27 @@
     <script>
         const hackerTextElement = document.getElementById('hackerText');
         const finalMessageElement = document.getElementById('finalMessage');
-        const hackerLines = [
-            "Iniciando secuencia de intrusión...",
-            "Buscando vulnerabilidades en el sistema...",
-            "Acceso concedido al servidor principal...",
-            "Descifrando paquetes de datos encriptados...",
-            "Extrayendo información crítica...",
-            "Analizando patrones de comportamiento...",
-            "¡Mensaje interceptado y decodificado!"
+        const romanticLines = [
+            "Conectando con la esencia de mi corazón...",
+            "Descifrando las señales del destino...",
+            "Acceso concedido a la verdad más pura...",
+            "Analizando la conexión irrompible...",
+            "Extrayendo el sentimiento más profundo...",
+            "Confirmando una realidad innegable...",
+            "¡El mensaje del universo ha sido revelado!"
         ];
         let lineIndex = 0;
         let charIndex = 0;
         let currentLine = '';
         let isTyping = true;
+        const finalMessage = "¡TE AMO, NASH! ❤️"; // Tu mensaje final
+        const matrixMessage = "TE AMO, NASH!"; // Mensaje para el efecto Matrix
 
         function typeWriter() {
             if (isTyping) {
-                if (lineIndex < hackerLines.length) {
-                    if (charIndex < hackerLines[lineIndex].length) {
-                        currentLine += hackerLines[lineIndex].charAt(charIndex);
+                if (lineIndex < romanticLines.length) {
+                    if (charIndex < romanticLines[lineIndex].length) {
+                        currentLine += romanticLines[lineIndex].charAt(charIndex);
                         hackerTextElement.textContent = currentLine;
                         charIndex++;
                         setTimeout(typeWriter, Math.random() * 80 + 30); // Velocidad de tipeo aleatoria
@@ -84,15 +104,37 @@
                 } else {
                     isTyping = false;
                     showFinalMessage();
+                    startMatrixEffect();
                 }
             }
         }
 
         function showFinalMessage() {
-            hackerTextElement.style.display = 'none'; // Oculta el texto hacker
+            hackerTextElement.style.display = 'none'; // Oculta el texto de las líneas románticas
             document.querySelector('.cursor').style.display = 'none'; // Oculta el cursor
-            finalMessageElement.textContent = "TE AMO NASH ❤️"; // El mensaje final
+            finalMessageElement.textContent = finalMessage;
             finalMessageElement.style.opacity = 1; // Hacerlo visible con fade-in
+        }
+
+        function startMatrixEffect() {
+            const body = document.body;
+            let count = 0;
+            const maxCount = 50; // Cantidad de textos Matrix que caerán
+
+            const interval = setInterval(() => {
+                if (count < maxCount) {
+                    const matrixDiv = document.createElement('div');
+                    matrixDiv.className = 'matrix-text';
+                    matrixDiv.textContent = matrixMessage;
+                    matrixDiv.style.left = Math.random() * 100 + 'vw'; // Posición horizontal aleatoria
+                    matrixDiv.style.animationDuration = (Math.random() * 3 + 2) + 's'; // Duración de caída aleatoria
+                    matrixDiv.style.fontSize = (Math.random() * 1.5 + 1) + 'em'; // Tamaño de fuente aleatorio
+                    body.appendChild(matrixDiv);
+                    count++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 150); // Frecuencia de aparición de los textos Matrix
         }
 
         // Iniciar el efecto después de un pequeño retraso
